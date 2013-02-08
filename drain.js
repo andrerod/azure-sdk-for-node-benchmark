@@ -38,28 +38,19 @@ if (cluster.isMaster) {
   measureTime(function (done) {
     function getNext() {
       serviceBus.receiveSubscriptionMessage(topic, subscription, function (err, receivedMessage) {
-        if (!err) {
+        if (!err && receivedCount < 1000) {
           ++receivedCount;
-          if (scheduleMore) {
-            scheduleMore = false;
-            done();
-          }
-        } else {
-          if (err !== 'No messages to receive') {
-            scheduleMore = false;
-            done();
-          }
+        } else if (scheduleMore) {
+          console.log(err);
+
+          scheduleMore = false;
+          done();
         }
       });
 
       ++scheduledMessages;
-      if (scheduleMore) {
-        if (scheduledMessages < 1000) {
-          getNext();
-        } else if (receivedCount >= 1000) {
-          // schedule 1000 more once the previous 1000 are received
-          scheduledMessages = 0;
-        }
+      if (scheduleMore && scheduledMessages < 1000) {
+        getNext();
       }
     }
 

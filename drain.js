@@ -34,19 +34,19 @@ if (cluster.isMaster) {
   var messageCount = 0;
 
   measureTime(function (done) {
-    function getNext() {
+    function getNext(primary) {
       serviceBus.receiveSubscriptionMessage(topic, subscription, function (err, receivedMessage) {
         if (err !== 'No messages to receive') {
           ++messageCount;
-          getNext();
-        } else {
+          getNext(primary);
+        } else if (primary) {
           done();
         }
       });
     }
 
     for (var i = 0; i < 4; i++) {
-      getNext();
+      getNext(i === 0);
     }
   }, function (elapsedMS) {
     console.log('Received ' + messageCount + ' messages in ' + elapsedMS + ' milliseconds');

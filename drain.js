@@ -38,23 +38,18 @@ if (cluster.isMaster) {
   measureTime(function (done) {
     function getNext() {
       serviceBus.receiveSubscriptionMessage(topic, subscription, function (err, receivedMessage) {
-        if (!err && receivedCount < 1000) {
-          ++receivedCount;
-        } else if (scheduleMore) {
-          console.log(err);
-
-          scheduleMore = false;
+        if (err !== 'No messages to receive') {
+          ++messageCount;
+          getNext();
+        } else {
           done();
         }
       });
-
-      ++scheduledMessages;
-      if (scheduleMore && scheduledMessages < 1000) {
-        getNext();
-      }
     }
 
-    getNext();
+    for (var i = 0; i < 4; i++) {
+      getNext();
+    }
   }, function (elapsedMS) {
     console.log('Received ' + receivedCount + ' messages in ' + elapsedMS + ' milliseconds');
     console.log('Average receive rate of ' + (receivedCount * 1000 / elapsedMS) + ' messages/second.');

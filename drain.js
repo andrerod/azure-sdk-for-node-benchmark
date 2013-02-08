@@ -38,11 +38,17 @@ if (cluster.isMaster) {
   measureTime(function (done) {
     function getNext() {
       serviceBus.receiveSubscriptionMessage(topic, subscription, function (err, receivedMessage) {
-        if (err !== 'No messages to receive') {
+        if (!err) {
           ++receivedCount;
-        } else if (scheduleMore) {
-          scheduleMore = false;
-          done();
+          if (scheduleMore) {
+            scheduleMore = false;
+            done();
+          }
+        } else {
+          if (err !== 'No messages to receive') {
+            scheduleMore = false;
+            done();
+          }
         }
       });
 

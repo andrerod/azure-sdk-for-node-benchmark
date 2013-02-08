@@ -31,9 +31,7 @@ if (cluster.isMaster) {
   }
 
   var serviceBus = azure.createServiceBusService();
-  var receivedCount = 0;
-  var scheduleMore = true;
-  var scheduledMessages = 0;
+  var messageCount = 0;
 
   measureTime(function (done) {
     function getNext() {

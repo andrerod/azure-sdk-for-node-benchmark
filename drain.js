@@ -49,7 +49,7 @@ if (cluster.isMaster) {
       getNext();
     }
   }, function (elapsedMS) {
-    console.log('Received ' + receivedCount + ' messages in ' + elapsedMS + ' milliseconds');
-    console.log('Average receive rate of ' + (receivedCount * 1000 / elapsedMS) + ' messages/second.');
+    console.log('Received ' + messageCount + ' messages in ' + elapsedMS + ' milliseconds');
+    console.log('Average receive rate of ' + (messageCount * 1000 / elapsedMS) + ' messages/second.');
   });
 }
